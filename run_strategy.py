@@ -452,14 +452,14 @@ def strategy(portfolio, snapshot):
     """
     Acheter si ASK <= 0.30
     Vendre si BID >= 0.70
-    Chaque nouvelle position utilise 10 USDC maximum.
+    Chaque nouvelle position utilise 1.1 USDC maximum.
     """
 
     if snapshot.empty:
         return
 
-    MAX_POSITION_USD = 10.0
-    BUY_THRESHOLD = 0.30
+    MAX_POSITION_USD = 1.1
+    BUY_THRESHOLD = 0.20
     SELL_THRESHOLD = 0.70
 
     for _, row in snapshot.iterrows():
