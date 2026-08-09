@@ -31,6 +31,7 @@ jobs:
           git config user.email "actions@github.com"
           git add portfolio.json
           git add trades.csv
+          git add portfolio_history.csv
           git commit -m "Collecte automatique" || echo "Rien à commit"
           git push
 
