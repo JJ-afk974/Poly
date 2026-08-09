@@ -23,7 +23,7 @@ jobs:
         run: pip install requests pandas
 
       - name: Lancer la collecte
-        run: python Collecte.py
+        run: python run_strategy.py
 
       - name: Commit et push du CSV
         run: |
