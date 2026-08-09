@@ -2,7 +2,12 @@ import json
 import requests
 import os
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, date, timedelta
+
+LOCATIONS = {
+    "paris": "paris",
+    "london": "london"
+}
 
 FEE = 0.002
 PORTFOLIO_FILE = "portfolio.json"
