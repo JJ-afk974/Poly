@@ -592,7 +592,7 @@ def main():
 
     print(
         f"Valeur     : "
-        f"{portfolio_value:.2f}"
+        f"{valuation:.2f}"
     )
 
     print("=" * 60)
