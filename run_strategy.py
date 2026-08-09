@@ -497,6 +497,25 @@ def strategy(portfolio, snapshot):
                 if (bid >= SELL_THRESHOLD and quantity > 0):
                     sell(portfolio, row, quantity, reason="sell_threshold")
 
+# GRAPH
+# ============================================================
+HISTORY_FILE = "portfolio_history.csv"
+def save_portfolio_history(portfolio, portfolio_value):
+    row = {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "cash": portfolio["cash"],
+        "portfolio_value": portfolio_value,
+    }
+
+    df = pd.DataFrame([row])
+    file_exists = os.path.exists(HISTORY_FILE)
+    df.to_csv(
+        HISTORY_FILE,
+        mode="a",
+        header=not file_exists,
+        index=False
+    )
+
 # MAIN
 # ============================================================
 
@@ -548,6 +567,8 @@ def main():
     # 5. Valorisation
     # --------------------------------------------------------
     portfolio_value = calculate_portfolio_value(portfolio, snapshot)
+    save_portfolio_history(portfolio, portfolio_value)
+    
     print("\n" + "=" * 60)
     print(
         f"Cash       : "
