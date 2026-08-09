@@ -5,7 +5,7 @@ import os
 import json
 from datetime import datetime
 
-SLUG = "highest-temperature-in-paris-on-june-30-2026"
+SLUG = "highest-temperature-in-paris-on-august-9-2026"
 
 FICHIER = "poly_live.csv"
 
