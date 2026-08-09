@@ -74,7 +74,7 @@ for asset, row in snapshot.iterrows():
     ask = row["ask"]
     bid = row["bid"]
 
-    # achat
+    # ACHAT : on paie le best ask
     if ask is not None and ask < BUY:
         cost = ask * QTY * (1 + FEE)
         if portfolio["cash"] >= cost:
@@ -82,7 +82,7 @@ for asset, row in snapshot.iterrows():
             portfolio["positions"][asset] = portfolio["positions"].get(asset, 0) + QTY
             log_trade("BUY", asset, ask, QTY)
 
-    # vente
+    # VENTE : on reçoit le best bid
     if bid is not None and bid > SELL:
         held = portfolio["positions"].get(asset, 0)
         if held >= QTY:
