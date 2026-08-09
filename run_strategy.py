@@ -424,26 +424,36 @@ def resolve_positions(portfolio, snapshot):
 # ============================================================
 
 def calculate_portfolio_value(portfolio, snapshot):
-    value = portfolio["cash"]
+    cash = portfolio["cash"]
+    position_value_mid = 0.0
+    liquidation_value = 0.0
     prices = {}
-
     if not snapshot.empty:
         for _, row in snapshot.iterrows():
-            if row["mid"] is not None:
-                prices[row["token_id"]] = row["mid"]
+            prices[row["token_id"]] = {
+                "mid": row["mid"],
+                "bid": row["best_bid"]
+            }
 
     for token_id, position in portfolio["positions"].items():
         quantity = position["quantity"]
-        mid = prices.get(token_id)
-
+        price_data = prices.get(token_id)
+        if price_data is None:
+            continue
+        mid = price_data["mid"]
+        bid = price_data["bid"]
         if mid is not None:
-            value += quantity * mid
+            position_value_mid += quantity * mid
+        if bid is not None:
+            liquidation_value += quantity * bid
+    nav = cash + liquidation_value
+    return {
+        "cash": cash,
+        "position_value_mid": position_value_mid,
+        "liquidation_value": liquidation_value,
+        "nav": nav
+    }
 
-        else:
-            # Si le marché n'est plus disponible, on ne valorise pas artificiellement. La position sera conservée jusqu'à résolution.
-            pass
-
-    return value
 
 # STRATEGIE
 # ============================================================
