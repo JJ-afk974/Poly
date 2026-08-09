@@ -7,7 +7,34 @@ FEE = 0.002
 PORTFOLIO_FILE = "portfolio.json"
 TRADES_FILE = "trades.csv"
 
-# fetch_snapshot() = ta fonction actuelle
+SLUG = "highest-temperature-in-paris-on-august-9-2026"
+
+def fetch_snapshot():
+    url = f"https://gamma-api.polymarket.com/events/slug/{SLUG}"
+    event = requests.get(url, timeout=10).json()
+
+    rows = []
+
+    for market in event["markets"]:
+        token = json.loads(market["clobTokenIds"])[0]
+
+        book = requests.get(
+            "https://clob.polymarket.com/book",
+            params={"token_id": token},
+            timeout=10
+        ).json()
+
+        bid = float(book["bids"][-1]["price"]) if book["bids"] else None
+        ask = float(book["asks"][-1]["price"]) if book["asks"] else None
+
+        rows.append({
+            "option": market["groupItemTitle"],
+            "bid": bid,
+            "ask": ask,
+            "mid": (bid + ask) / 2 if bid and ask else None
+        })
+
+    return pd.DataFrame(rows).set_index("option")
 
 def load_portfolio():
     if os.path.exists(PORTFOLIO_FILE):
