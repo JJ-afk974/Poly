@@ -510,21 +510,19 @@ def strategy(portfolio, snapshot):
 # GRAPH
 # ============================================================
 HISTORY_FILE = "portfolio_history.csv"
-def save_portfolio_history(portfolio, portfolio_value):
+def save_portfolio_history(portfolio, valuation, return_pct):
     row = {
         "timestamp": datetime.now(timezone.utc).isoformat(),
-        "cash": portfolio["cash"],
-        "portfolio_value": portfolio_value,
+        "cash": valuation["cash"],
+        "position_value_mid": valuation["position_value_mid"],
+        "liquidation_value": valuation["liquidation_value"],
+        "nav": valuation["nav"],
+        "return_pct": return_pct
     }
 
     df = pd.DataFrame([row])
     file_exists = os.path.exists(HISTORY_FILE)
-    df.to_csv(
-        HISTORY_FILE,
-        mode="a",
-        header=not file_exists,
-        index=False
-    )
+    df.to_csv(HISTORY_FILE, mode="a", header=not file_exists, index=False)
 
 # MAIN
 # ============================================================
@@ -576,8 +574,10 @@ def main():
 
     # 5. Valorisation
     # --------------------------------------------------------
-    portfolio_value = calculate_portfolio_value(portfolio, snapshot)
-    save_portfolio_history(portfolio, portfolio_value)
+    valuation = calculate_portfolio_value(portfolio, snapshot)
+    nav = valuation["nav"]
+    initial_cash = INITIAL_CASH
+    return_pct = ((nav / initial_cash) - 1) * 100
     
     print("\n" + "=" * 60)
     print(
@@ -601,6 +601,7 @@ def main():
     # 6. Sauvegarder
     # --------------------------------------------------------
     save_portfolio(portfolio)
+    save_portfolio_history(portfolio, valuation, return_pct)
     print("\nPortefeuille sauvegardé.")
 
 if __name__ == "__main__":
