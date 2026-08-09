@@ -8,34 +8,47 @@ FEE = 0.002
 PORTFOLIO_FILE = "portfolio.json"
 TRADES_FILE = "trades.csv"
 
-SLUG = "highest-temperature-in-paris-on-august-9-2026"
+SLUGS = {
+    # Paris
+    "paris_j0":  "highest-temperature-in-paris-on-august-9-2026",
+    "paris_j1":  "highest-temperature-in-paris-on-august-10-2026",
+    "paris_j2":  "highest-temperature-in-paris-on-august-11-2026",
+
+    # Londres
+    "london_j0": "highest-temperature-in-london-on-august-9-2026",
+    "london_j1": "highest-temperature-in-london-on-august-10-2026",
+    "london_j2": "highest-temperature-in-london-on-august-11-2026",
+}
 
 def fetch_snapshot():
-    url = f"https://gamma-api.polymarket.com/events/slug/{SLUG}"
-    event = requests.get(url, timeout=10).json()
-
     rows = []
 
-    for market in event["markets"]:
-        token = json.loads(market["clobTokenIds"])[0]
+    for group, slug in SLUGS.items():
+        url = f"https://gamma-api.polymarket.com/events/slug/{slug}"
+        event = requests.get(url, timeout=10).json()
 
-        book = requests.get(
-            "https://clob.polymarket.com/book",
-            params={"token_id": token},
-            timeout=10
-        ).json()
+        for market in event["markets"]:
+            token = json.loads(market["clobTokenIds"])[0]
 
-        bid = float(book["bids"][-1]["price"]) if book["bids"] else None
-        ask = float(book["asks"][-1]["price"]) if book["asks"] else None
+            book = requests.get(
+                "https://clob.polymarket.com/book",
+                params={"token_id": token},
+                timeout=10
+            ).json()
 
-        rows.append({
-            "option": market["groupItemTitle"],
-            "bid": bid,
-            "ask": ask,
-            "mid": (bid + ask) / 2 if bid and ask else None
-        })
+            bid = float(book["bids"][-1]["price"]) if book["bids"] else None
+            ask = float(book["asks"][-1]["price"]) if book["asks"] else None
 
-    return pd.DataFrame(rows).set_index("option")
+            rows.append({
+                "asset": f"{group}:{market['groupItemTitle']}",
+                "group": group,
+                "option": market["groupItemTitle"],
+                "bid": bid,
+                "ask": ask,
+                "mid": (bid + ask) / 2 if bid is not None and ask is not None else None
+            })
+
+    return pd.DataFrame(rows).set_index("asset")
 
 def load_portfolio():
     if os.path.exists(PORTFOLIO_FILE):
