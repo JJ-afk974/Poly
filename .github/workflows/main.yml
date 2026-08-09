@@ -29,6 +29,5 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add temperatures_3jours.csv
           git commit -m "Collecte automatique" || echo "Rien à commit"
           git push
