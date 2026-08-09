@@ -578,25 +578,6 @@ def main():
     nav = valuation["nav"]
     initial_cash = INITIAL_CASH
     return_pct = ((nav / initial_cash) - 1) * 100
-    
-    print("\n" + "=" * 60)
-    print(
-        f"Cash       : "
-        f"{portfolio['cash']:.2f}"
-    )
-
-    print(
-        f"Positions  : "
-        f"{len(portfolio['positions'])}"
-    )
-
-    print(
-        f"Valeur     : "
-        f"{valuation:.2f}"
-    )
-
-    print("=" * 60)
-
 
     # 6. Sauvegarder
     # --------------------------------------------------------
