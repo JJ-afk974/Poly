@@ -450,7 +450,7 @@ def calculate_portfolio_value(portfolio, snapshot):
 
 def strategy(portfolio, snapshot):
     """
-    Acheter si ASK <= 0.30
+    Acheter si ASK <= 0.10
     Vendre si BID >= 0.70
     Chaque nouvelle position utilise 1.1 USDC maximum.
     """
@@ -459,7 +459,7 @@ def strategy(portfolio, snapshot):
         return
 
     MAX_POSITION_USD = 1.1
-    BUY_THRESHOLD = 0.20
+    BUY_THRESHOLD = 0.10
     SELL_THRESHOLD = 0.70
 
     for _, row in snapshot.iterrows():
